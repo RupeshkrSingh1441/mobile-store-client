@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+//import './Register.css;'
 
 const Register =()=>{
     const [model, setModel] = useState({fullName:'', email:'', password:''});
@@ -10,23 +11,29 @@ const Register =()=>{
     const handleSubmit = async e => {
         e.preventDefault();
         try{
-            const res = await axios.post('${process.env.REACT_APP_API_URL}/auth/register', model);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, model);
             setMessage(res.data);
         } catch(err){
-            setMessage(err.res.data || "Error during registration");
+            setMessage(err.response?.data || "Error during registration");
         }
     };
 
     return (
-        <div className='container mt-5'>
-          <h2>Register</h2>
-          <form onSubmit ={handleSubmit}>
+        <div className='register-wrapper d-flex align-items-center justify-content-center'>         
+          <form className='register-form p-4 shadow-lg rounded' onSubmit ={handleSubmit}>
+          <h2 className='mb-4 text-center'>Register</h2>
+          <div className='mb-3'>
            <input type='text' name='fullName' className='form-control mb-2' placeholder='Full Name' onChange={handleChange}/>
+           </div>
+           <div className='mb-3'>
            <input type='email' name='email' className='form-control mb-2' placeholder='Email' onChange={handleChange}/>
+           </div>
+           <div className='mb-3'>
            <input type='password' name='password' className='form-control mb-2' placeholder='Password' onChange={handleChange}/>
-           <button className='btn btn-primary'>Register</button>
+           </div>
+           <button className='btn btn-primary w-100'>Register</button>
+           {message && <div className='mt-3 alert alert-success'>{message}</div>}
           </form>
-          {message && <div className='mt-3 alert alert-info'>{message}</div>}
         </div>
     );
 };
