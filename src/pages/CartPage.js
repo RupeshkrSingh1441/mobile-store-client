@@ -1,8 +1,51 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
+import axios from 'axios';
 
 const CartPage = () => {
     const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
+    
+    const getTotalAmount = () => {
+        return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    };
+
+    const handlePayNow = async () => {
+        try {
+            // Call backend to create Razorpay order
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/payment/create-order`, {
+                amount: getTotalAmount(), // Razorpay expects amount in paise
+                receiptId: "receipt#1",
+                email: "rs.rupesh105@gmail.com", // Add user email if available
+            });
+            const { orderId, key, amount} = res.data;
+
+            const options = {
+                key: key, // Razorpay key_id from backend
+                amount: amount,
+                currency: "INR",
+                name: "Mobile Store",
+                description: "Order Payment",
+                order_id: orderId,
+                handler: function (response) {
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    // You can call backend to verify payment here
+                },
+                prefill: {
+                    // You can add user details here if available
+                    email:"rs.rupesh105@gmail.com",
+                    contact: ""
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (err) {
+            alert("Payment initiation failed!");
+        }
+    };
 
     if (cart.length === 0) {
         return <div className="container mt-4"><h3>Your cart is empty.</h3></div>;
@@ -31,6 +74,10 @@ const CartPage = () => {
                     </div>
                 ))}
                 </div>
+            </div>
+            <div className="d-flex justify-content-end align-items-center">
+                <h4 className="me-4">Total: ₹{getTotalAmount()}</h4>
+                <button className="btn btn-success" onClick={handlePayNow}>Pay Now</button>
             </div>
         </div>
     );

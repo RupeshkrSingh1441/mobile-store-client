@@ -1,6 +1,7 @@
 import React, { useState, useEffect,useContext } from 'react';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
+import CheckoutButton from '../components/CheckoutButton';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
@@ -46,8 +47,11 @@ const ProductList = () => {
                                 <h5 className="product-name">{product.brand}</h5>
                                 <h6 className="card-subtitle mb-2 text-muted">{product.model}</h6>
                                 <p className="product-description">{product.description}</p>
-                                <strong className="product-price">₹{product.price.toLocaleString()}</strong>
-                                <button className={`btn w-100 ${addedId === product.id ? 'btn-success' : 'btn-warning'}`}
+                                <strong className="product-price">
+                                    {/* ₹{product.price.toLocaleString()} */}
+                                    <CheckoutButton amount={product.price} />
+                                    </strong>
+                                <button className={`btn w-100 ${addedId === product.id ? 'btn-success' : 'btn-primary'}`}
                                 onClick={() => handleAddToCart(product)}disabled={addedId === product.id}
                                     >
                                         {addedId === product.id ? 'Added!' : 'Add to Cart'}

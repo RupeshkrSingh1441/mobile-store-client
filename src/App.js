@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import  Register  from './pages/Register';
@@ -11,8 +11,19 @@ import AdminRoute from './auth/AdminRoute';
 import CartPage from './pages/CartPage';
 import Header from './shared/Header';
 import Footer from './shared/Footer';
+import AdminOrders from './pages/AdminOrders';
 
 function App() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <Router>
     <Header />
@@ -34,6 +45,11 @@ function App() {
         <Route path ="/admin/products" element={
           <AdminRoute>
             <ProductAdmin/>
+          </AdminRoute>
+        }/>
+        <Route path ="/admin-order" element={
+          <AdminRoute>
+            <AdminOrders/>
           </AdminRoute>
         }/>
       </Routes>
