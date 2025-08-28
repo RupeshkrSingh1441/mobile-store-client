@@ -27,13 +27,13 @@ return (
         </thead>
         <tbody>
             {orders.map(order => (
-                <tr key={order._id}>
-                    <td>{order.RazorpayOrderId}</td>
-                    <td>{order.RazorpayPaymentId}</td>
-                    <td>{order.Email}</td>
-                    <td>{new Date(order.OrderDate).toLocaleDateString()}</td>
-                    <td>${order.Amount.toFixed(2)}</td>
-                    <td>{order.Status}</td>
+                <tr key={order.id}>
+                    <td>{order.razorpayOrderId}</td>
+                    <td>{order.razorpayPaymentId}</td>
+                    <td>{order.email}</td>
+                    <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                    <td>₹{order.amount}</td> {/* ${order.Amount.toFixed(2)}*/}
+                    <td>{order.status}</td>
                 </tr>
             ))}
         </tbody>

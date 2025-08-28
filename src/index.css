@@ -38,10 +38,12 @@ code {
 .product-list{
   display: flex;
   flex-wrap: wrap;
+  height: 100%;
   gap: 20px;
 }
 
 .product-card{
+  display: flex;
   flex: 1 1 calc(25% - 20px);
   max-width: calc(25% - 20px );
   border: 1px solid #ddd;
@@ -59,7 +61,7 @@ code {
 
 .product-image {
   width: 100%;
-  height: 250px;
+  height: 100%;
   object-fit: contain;
   background-color: #f9f9f9;
 }
@@ -68,7 +70,7 @@ code {
   padding: 15px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex: 1;
 }
 
 .product-name{

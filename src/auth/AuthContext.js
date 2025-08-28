@@ -14,8 +14,12 @@ export const AuthProvider = ({ children }) => {
             try {
                 const decoded = jwtDecode(token);
                 console.log('Decoded JWT:', decoded); // Check for 'name' property
+                let roles =[];
+                if(decoded.roles){
+                    roles = decoded.roles.split(','); // Assuming roles are stored as a comma-separated string
+                }
                 //setUser(decoded);
-                setUser({...decoded, token}); // Store token in user state for future use
+                setUser({...decoded,roles, token}); // Store token in user state for future use
             } catch (error) {
                 console.error("Invalid token:", error);
                 //localStorage.removeItem('token');
@@ -28,9 +32,12 @@ export const AuthProvider = ({ children }) => {
     const login = (token) => {
         localStorage.setItem('token', token);
         const decoded = jwtDecode(token);
-        console.log('Decoded JWT:', decoded); // Check for 'name' property
-        //setUser(decoded);
-        setUser({...decoded, token}); // Store token in user state for future use
+        
+        let roles =[];
+        if(decoded.roles){
+            roles = decoded.roles.split(','); // Assuming roles are stored as a comma-separated string
+        }//setUser(decoded);
+        setUser({...decoded,roles, token}); // Store token in user state for future use
     };
 
     const logout = () => {

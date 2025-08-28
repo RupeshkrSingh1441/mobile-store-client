@@ -7,6 +7,7 @@ const Header = () => {
   const { cart } = useContext(CartContext);
   const { user, logout } = useContext(AuthContext);
 
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
@@ -26,6 +27,11 @@ const Header = () => {
           <span className="ms-2">Mobile Store</span>
         </Link>
         <div className="d-flex align-items-center">
+          {user?.roles?.includes('Admin') && (
+            <Link to="/admin-order" className="btn btn-outline-dark me-2">
+              Admin Orders
+            </Link>
+          )}
           <Link to="/cart" className="btn btn-outline-primary me-3">
             <span role="img" aria-label="cart">
               🛒
