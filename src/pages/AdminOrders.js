@@ -5,11 +5,27 @@ const AdminOrders = () => {
 const [orders, setOrders] = useState([]);
 const token = localStorage.getItem('token');
 
-useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/order/all-orders`, {
-        headers: {Authorization: `Bearer ${token}`} 
-    }).then(res => setOrders(res.data));
-},[token]);
+ useEffect(() => {
+    if (!token) return;
+
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/order/all-orders`,
+          {}, // No body data, send empty object
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
+    console.log("Fetched Orders:", orders);
+  }, [token]);
 
 return (
     <div className="container mt-4">

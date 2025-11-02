@@ -3,161 +3,214 @@ import axios from "axios";
 
 const ProductAdmin = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [newProduct, setNewProduct] = useState({
     brand: "",
     model: "",
     description: "",
     price: "",
-    imageUrl: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const token = localStorage.getItem("token");
 
+  // ✅ Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        await axios
-          .get(`${process.env.REACT_APP_API_URL}/product`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((res) => {
-            setProducts(res.data.products || []);
-          });
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/product`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProducts(res.data.products || []);
       } catch (err) {
-        setError("Failed to load products");
+        console.error("Error fetching products:", err);
+        setError("❌ Failed to load products. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    if (token) fetchProducts();
+  }, [token]);
 
+  // ✅ Handle text field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct({ ...newProduct, [name]: value });
+    setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Handle image upload & preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); // show live preview
+    }
+  };
+
+  // ✅ Check if form is valid (all required fields)
+  const isFormValid =
+    newProduct.brand.trim() &&
+    newProduct.model.trim() &&
+    newProduct.description.trim() &&
+    newProduct.price.toString().trim() &&
+    imageFile;
+
+  // ✅ Add new product (with image upload)
   const handleAddProduct = async (e) => {
     e.preventDefault();
+
     try {
-      await axios
-        .post(`${process.env.REACT_APP_API_URL}/product`, newProduct, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => {
-          console.log(res.data);
-        });
-      setProducts([...products, newProduct]);
-      setNewProduct({
-        brand: "",
-        model: "",
-        description: "",
-        price: "",
-        imageUrl: "",
-      });
+      const formData = new FormData();
+      formData.append("brand", newProduct.brand);
+      formData.append("model", newProduct.model);
+      formData.append("description", newProduct.description);
+      formData.append("price", newProduct.price);
+      formData.append("image", imageFile); // backend should expect "image" field
+
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/product`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setProducts((prev) => [...prev, res.data.product || newProduct]);
+      setNewProduct({ brand: "", model: "", description: "", price: "" });
+      setImageFile(null);
+      setPreviewUrl(null);
     } catch (err) {
-      setError("Failed to add product");
+      console.error("Error adding product:", err);
+      setError("❌ Failed to add product.");
     }
   };
 
+  // ✅ Delete product
   const handleDeleteProduct = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios
-        .delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => {
-          console.log(res.data);
-
-          setProducts(products.filter((product) => product.id !== id));
-        });
+      await axios.delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
-      setError("Failed to delete product");
+      console.error("Error deleting product:", err);
+      setError("❌ Failed to delete product.");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
-  return (
-    <div className="admin-container">
-      <h2 className="admin-title">Admin - Manage Products</h2>
-      <form onSubmit={handleAddProduct} className="admin-form mb-4">
-        <input
-          className="form-control mb-2"
-          type="text"
-          name="brand"
-          placeholder="Product Brand"
-          value={newProduct.brand}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          className="form-control mb-2"
-          type="text"
-          name="model"
-          placeholder="Product Model"
-          value={newProduct.model}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          className="form-control mb-2"
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={newProduct.description}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          className="form-control mb-2"
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          className="form-control mb-2"
-          type="text"
-          name="imageUrl"
-          placeholder="Image URL"
-          value={newProduct.imageUrl}
-          onChange={handleInputChange}
-        />
-        <div className="d-flex justify-content-center">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{ width: "120px" }}
-          >
-            Add Product
-          </button>
+  // ✅ Loading & Error UI
+  if (loading)
+    return (
+      <div className="d-flex vh-100 align-items-center justify-content-center">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
-      </form>
-      <ul className="admin-list-group list-group">
-        {products.map((product) => (
-          <li
-            key={product.id}
-            className="admin-list-group-item list-group-item"
-          >
-            <div>
-              {product.brand} {product.model} - ₹{product.price}
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="d-flex vh-100 align-items-center justify-content-center">
+        <div className="alert alert-danger text-center" style={{ maxWidth: "400px" }}>
+          {error}
+        </div>
+      </div>
+    );
+
+  // ✅ Main UI
+  return (
+    <main className="d-flex align-items-center justify-content-center vh-100 bg-light">
+      <div className="card shadow-lg p-4 w-100" style={{ maxWidth: "600px" }}>
+        <h2 className="admin-title text-center fw-bold mb-4">Admin – Manage Products</h2>
+
+        {/* Product Form */}
+        <form onSubmit={handleAddProduct} className="mb-4" encType="multipart/form-data">
+          {["brand", "model", "description", "price"].map((field) => (
+            <input
+              key={field}
+              className="form-control mb-3"
+              type={field === "price" ? "number" : "text"}
+              name={field}
+              placeholder={`Product ${field.charAt(0).toUpperCase() + field.slice(1)}`}
+              value={newProduct[field]}
+              onChange={handleInputChange}
+              required
+            />
+          ))}
+
+          {/* ✅ File Upload Field */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Product Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="form-control"
+              onChange={handleImageChange}
+              required
+            />
+          </div>
+
+          {/* ✅ Image Preview */}
+          {previewUrl && (
+            <div className="text-center mb-3">
+              <img
+                src={previewUrl}
+                alt="Preview"
+                style={{
+                  maxWidth: "150px",
+                  maxHeight: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                }}
+              />
             </div>
+          )}
+
+          <div className="text-center">
             <button
-              className="btn btn-danger btn-sm"
-              onClick={() => handleDeleteProduct(product.id)}
+              type="submit"
+              className="btn btn-primary px-4"
+              disabled={!isFormValid} // ✅ stays disabled until all fields filled
             >
-              Delete
+              Add Product
             </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+          </div>
+        </form>
+
+        {/* Product List */}
+        <ul className="list-group">
+          {products.length === 0 ? (
+            <li className="list-group-item text-center text-muted">
+              No products available.
+            </li>
+          ) : (
+            products.map((product) => (
+              <li
+                key={product.id}
+                className="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  <strong>{product.brand}</strong> {product.model} – ₹{product.price}
+                </div>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDeleteProduct(product.id)}
+                >
+                  Delete
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+    </main>
   );
 };
+
 export default ProductAdmin;
