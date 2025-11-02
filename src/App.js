@@ -36,13 +36,13 @@ function App() {
         <Route path = "/register" element={<Register/>}/>
         <Route path = "/login" element={<Login/>}/>
         <Route path="/cart" element={<CartPage />} />
-        <Route path = "/store/products" element={
+        <Route path = "/store-products" element={
           <ProtectedRoute>
             <ProductList/>
           </ProtectedRoute>
         }/>        
         <Route path = "/confirm-email" element={<ConfirmEmail/>}/>
-        <Route path ="/admin/products" element={
+        <Route path ="/admin-products" element={
           <AdminRoute>
             <ProductAdmin/>
           </AdminRoute>

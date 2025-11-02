@@ -9,7 +9,7 @@ const Header = () => {
 
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg sticky-header">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center" to="/">
           {/* Mobile Store Icon */}

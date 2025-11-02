@@ -98,3 +98,149 @@ code {
     box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     transform: translateY(-2px);
 }
+/*-- Admin page ---*/
+.admin-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.admin-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #3399cc;
+}
+
+.admin-form input {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.admin-form .btn-primary {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.admin-list-group {
+  margin-top: 2rem;
+}
+
+.admin-list-group-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  background: #f8f9fa;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.admin-list-group-item div {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.admin-list-group-item .btn-danger {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.8rem;
+}
+
+/* Header */
+.sticky-header {
+  position: sticky !important;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, #3399cc 0%, #005580 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 0.75rem 0;
+}
+
+.btn-outline-primary:hover span[aria-label="cart"] {
+  color: #fff !important;
+  transition: color 0.2s;
+}
+
+.sticky-header .navbar-brand,
+.sticky-header .nav-link,
+.sticky-header .btn {
+  color: #fff !important;
+}
+
+.sticky-header .btn-outline-primary,
+.sticky-header .btn-outline-success,
+.sticky-header .btn-outline-danger,
+.sticky-header .btn-outline-dark {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* .sticky-header .btn-outline-primary:hover,
+.sticky-header .btn-outline-success:hover,
+.sticky-header .btn-outline-danger:hover,
+.sticky-header .btn-outline-dark:hover {
+  background: #fff;
+  color: #3399cc;
+} */
+
+.sticky-header .btn-outline-primary:hover [aria-label="cart"] {
+  color: #fff !important;
+  transition: color 0.2s !important;
+}
+
+/*-- Footer ---*/
+.sticky-footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #005580 0%, #3399cc 100%);
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  z-index: 100;
+}
+
+/*-- Filter and Search ---*/
+.filters{
+  /* display: flex; */
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filters input[type="text"],
+.filters select {
+  padding: 8px 12px;  
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  flex: 1;
+  outline: none;
+  min-width: 200px;
+  transition: border-color 0.2s ease;
+}
+.filters input[type="text"]:focus,
+.filters select:focus {
+  border-color: #3399cc;
+  box-shadow: 0 0 5px rgba(51, 153, 204, 0.3);
+}
+
+.filters button {
+  background: #3399cc;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+.filters button:hover {
+  background: #287aa9;
+}
