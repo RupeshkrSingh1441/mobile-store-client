@@ -11,12 +11,9 @@ const token = localStorage.getItem('token');
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/order/all-orders`,
-          {}, // No body data, send empty object
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+          `${process.env.REACT_APP_API_URL}/order/all-orders`,{ 
+            headers: { Authorization: `Bearer ${token}` }
+        });
         setOrders(response.data);
       } catch (error) {
         console.error("Error fetching orders:", error);

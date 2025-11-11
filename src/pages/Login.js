@@ -1,29 +1,27 @@
 import React, {useContext,useState} from 'react';
-//import {AuthContext} from '../auth/AuthContext';
+import {AuthContext} from '../auth/AuthContext';
 import axios from 'axios';
 
 const Login =()=>{
     const [model, setModel] = useState({email:'', password:''});
     const [error, setError] = useState('');
-    //const [login] = useContext(AuthContext) || [null, () => {}];
+    const { login } = useContext(AuthContext);
     
 
     const handleChange = e => setModel({...model, [e.target.name]:e.target.value});
 
     const handleSubmit = async e => {
         e.preventDefault();
-        try{
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, model);
-                //"https://localhost:7006/api/auth/login",model);                
-            console.log("Login Response:", res);
-            // const taken = res.data.token;
-            // login(taken); // Update AuthContext with the new token
-            localStorage.setItem("token",res.data.token);
-            window.location.href = "/"; // redirect after login
-        } catch(err){
-            console.log("Login Error:", err);
-            setError(err.response?.data || "Login failed");
-        }
+        try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, model);
+      const token = res.data.token;
+      if (!token) throw new Error('Token not returned');
+      login(token); // ✅ Handles role-based redirect internally
+      console.log(localStorage.getItem("token"));
+
+    } catch (err) {
+      setError('Invalid email or password');
+    }
     };
 
     return (

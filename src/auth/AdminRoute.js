@@ -1,19 +1,14 @@
 import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import { AuthContext } from "../auth/AuthContext";
+import { Navigate, Outlet } from 'react-router-dom';
+import { AuthContext } from '../auth/AuthContext';
 
-const AdminRoute = ({ children }) => {
-    const { user, loading } = useContext(AuthContext);
+const AdminRoute = () => {
+  const { user, loading } = useContext(AuthContext);
 
-    if (loading) {
-        return <div>Loading...</div>; // or a spinner component
-    }
+  if (loading) return <div>Loading...</div>;
 
-    //return user && user.role === 'admin' ? children : <Navigate to="/" replace />;
-    if (!user || !user.roles?.includes("Admin")) {
-    return <Navigate to="/" />;
-  }
-  return children;
-}
+  const isAdmin = user?.roles?.includes('Admin');
+  return isAdmin ? <Outlet /> : <Navigate to="/" replace />;
+};
 
 export default AdminRoute;

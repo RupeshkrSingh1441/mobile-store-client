@@ -1,53 +1,71 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                console.log('Decoded JWT:', decoded); // Check for 'name' property
-                let roles =[];
-                if(decoded.roles){
-                    roles = decoded.roles.split(','); // Assuming roles are stored as a comma-separated string
-                }
-                //setUser(decoded);
-                setUser({...decoded,roles, token}); // Store token in user state for future use
-            } catch (error) {
-                console.error("Invalid token:", error);
-                //localStorage.removeItem('token');
-                logout(); // Clear invalid token
-            }
-        }
-        setLoading(false);
-    }, []);
-
-    const login = (token) => {
-        localStorage.setItem('token', token);
-        const decoded = jwtDecode(token);
-        
-        let roles =[];
-        if(decoded.roles){
-            roles = decoded.roles.split(','); // Assuming roles are stored as a comma-separated string
-        }//setUser(decoded);
-        setUser({...decoded,roles, token}); // Store token in user state for future use
-    };
-
-    const logout = () => {
+  const loadUserFromToken = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
+        console.warn('Token expired');
         localStorage.removeItem('token');
         setUser(null);
-    };
+        return;
+      }
+      const roles = decoded.roles ? decoded.roles.split(',') : decoded.role
+? [decoded.role]
+: [];
+      setUser({ ...decoded, roles, token });
+    } catch (err) {
+      console.error('Invalid token:', err);
+      localStorage.removeItem('token');
+      setUser(null);
+    }
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) loadUserFromToken(token);
+    setLoading(false);
+  }, []);
+
+  const login = (token) => {
+    localStorage.setItem('token', token);
+    loadUserFromToken(token);
+
+    try {
+      const decoded = jwtDecode(token);
+      const roles = decoded.roles
+        ? decoded.roles.split(',')
+        : decoded.role
+        ? [decoded.role]
+        : [];
+
+      // ✅ Role-based redirect
+      if (roles.includes('Admin')) {
+        window.location.href = '/admin-order';
+      } else {
+        window.location.href = '/';
+      }
+    } catch (err) {
+      console.error('JWT decode failed:', err);
+      window.location.href = '/';
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    window.location.href = '/login';
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

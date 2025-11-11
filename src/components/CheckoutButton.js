@@ -27,7 +27,7 @@ const CheckoutButton = ({ amount }) => {
     };
 };
  return (
-        <button className='btn btn-warning' onClick={handlePayment}>
+        <button className='btn btn-warning shadow-sm' onClick={handlePayment}>
             Buy Now ₹{amount}
         </button>
     );

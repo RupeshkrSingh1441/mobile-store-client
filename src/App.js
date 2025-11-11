@@ -1,66 +1,57 @@
-import React,{useEffect} from 'react';
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import  Register  from './pages/Register';
-import Login from './pages/Login';
-import ConfirmEmail from './pages/ConfirmEmail';
-import ProductList from './pages/ProductList';
-import ProductAdmin from './pages/ProductAdmin';
-import ProtectedRoute from './auth/ProtectedRoute';
-import AdminRoute from './auth/AdminRoute';
-import CartPage from './pages/CartPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./auth/AuthContext";
+import { CartProvider } from "./context/CartContext";
+
 import Header from './shared/Header';
 import Footer from './shared/Footer';
-import AdminOrders from './pages/AdminOrders';
+import ProductList from "./pages/ProductList";
+import CartPage from "./pages/CartPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProductDetails from "./pages/ProductDetails";
+import AdminOrders from "./pages/AdminOrders"; // ✅ Import your admin page
+import AdminRoute from "./auth/AdminRoute";    // ✅ Import your AdminRoute
+import ProtectedRoute from "./auth/ProtectedRoute"; // ✅ Optional if you use protected user-only routes
+
 
 function App() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   return (
-    <Router>
-    <Header />
-    <main className="container my-4">
-      <div className="row">
-       
-        <div className="col-md-12">
-      <Routes>
-      <Route path = "/" element={<ProductList/>}/>
-        <Route path = "/register" element={<Register/>}/>
-        <Route path = "/login" element={<Login/>}/>
-        <Route path="/cart" element={<CartPage />} />
-        <Route path = "/store-products" element={
-          <ProtectedRoute>
-            <ProductList/>
-          </ProtectedRoute>
-        }/>        
-        <Route path = "/confirm-email" element={<ConfirmEmail/>}/>
-        <Route path ="/admin-products" element={
-          <AdminRoute>
-            <ProductAdmin/>
-          </AdminRoute>
-        }/>
-        <Route path ="/admin-order" element={
-          <AdminRoute>
-            <AdminOrders/>
-          </AdminRoute>
-        }/>
-      </Routes>
-        </div>
-      </div>
-    </main>
-    <Footer />  
-    </Router>
-    // <div>
-    //   <h1>Hello World!</h1>
-    // </div>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <Header />
+
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<ProductList />} />
+            <Route path="/mobile-store-client" element={<ProductList />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+
+
+            {/* Protected Routes (any logged-in user) */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<div>My Profile</div>} />
+              {/* you can add more protected pages here */}
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin-order" element={<AdminOrders />} />
+              {/* you can also include more like: */}
+              {/* <Route path="/admin/products" element={<ProductAdmin />} /> */}
+            </Route>
+
+            {/* Fallback */}
+            <Route path="*" element={<div>404 Not Found</div>} />
+          </Routes>
+
+          <Footer />
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
