@@ -417,3 +417,19 @@ input.form-control:focus {
     color: #1E3A8A !important;
 }
 
+/* Make entire app full height */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make content take remaining space */
+.main-content {
+  flex: 1;
+}
+
+.footer {
+  background: #0d47a1;
+  color: white;
+}

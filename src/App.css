@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); color:#ff3b3b; }
+  100% { transform: scale(1); }
+}
