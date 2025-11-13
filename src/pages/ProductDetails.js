@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
+
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -35,6 +37,7 @@ const ProductDetails = () => {
         setFeatures(data.features || []);
         setRelatedProducts(data.relatedProducts || []);
         setReviews(data.reviews || []);
+        setLoading(false);
       } catch (err) {
         console.log(err);
         toast.error("Failed to load product details");
@@ -65,7 +68,7 @@ const ProductDetails = () => {
   };
 
   if (loading || !product)
-    return <div className="text-center mt-5">Loading...</div>;
+    return <Loader />;
 
   const inCart = cart.some((x) => x.id === product.id);
 

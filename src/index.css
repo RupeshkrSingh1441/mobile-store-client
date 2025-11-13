@@ -4,6 +4,7 @@ body {
   font-family: 'Inter', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-top: 72px; /* same height as header */
   background-color: #f8fafc;
   color: #1e293b;
 }
@@ -191,7 +192,7 @@ a, button {
 
 /* If you want cart button on white background (like product page) */
 .cart-btn.light {
-  color: #1E40AF;
+  color: #1e40af;
 }
 
 .cart-btn:hover {
@@ -274,27 +275,6 @@ a, button {
   transform: translateY(-2px);
 }
 
-/* === Header === */
-.sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: linear-gradient(90deg, #1e40af 0%, #1e3a8a 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 0.75rem 0;
-}
-
-.sticky-header .navbar-brand,
-.sticky-header .nav-link,
-.sticky-header .btn {
-  color: #fff !important;
-  transition: color 0.2s;
-}
-
-.sticky-header .nav-link:hover {
-  color: #c7d2fe !important;
-}
 
 /* Dropdown menu */
 .dropdown-menu {
@@ -305,21 +285,6 @@ a, button {
 .dropdown-item:hover {
   background-color: #eef2ff;
   color: #1e40af;
-}
-
-/* === Footer === */
-.sticky-footer {
-  position: relative;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
-  color: #fff;
-  text-align: center;
-  padding: 1rem 0;
-  font-size: 0.9rem;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-  z-index: 100;
 }
 
 /* === Filters & Search === */
@@ -408,7 +373,7 @@ input.form-control {
 }
 
 input.form-control:focus {
-  border-color: #1E40AF;
+  border-color: #1e40af;
   box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
 }
 
@@ -432,4 +397,61 @@ input.form-control:focus {
 .footer {
   background: #0d47a1;
   color: white;
+}
+
+/* Full-page layout fix */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding-bottom: 40px;
+}
+
+/* Global font and smooth transitions */
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #fdfdfd;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Scrollbar customization (optional) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #0d47a1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #e9ecef;
+}
+
+/* Prevent layout shift during loader */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); color:#ff3b3b; }
+  100% { transform: scale(1); }
 }

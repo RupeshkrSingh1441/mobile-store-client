@@ -22,7 +22,7 @@ root.render(
   <AuthProvider>
     <CartProvider>
       <App />
-       <ToastContainer position="top-right" autoClose={1500} />
+       <ToastContainer position="top-right" autoClose={2000} />
     </CartProvider>
   </AuthProvider>
 );

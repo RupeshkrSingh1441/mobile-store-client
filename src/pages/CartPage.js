@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+
 const CartPage = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
     useContext(CartContext);
@@ -75,7 +76,7 @@ const CartPage = () => {
           clearCart();
           navigate("/");
         },
-        theme: { color: "#1E40AF" },
+        theme: { color: "#1e40af" },
       };
 
       const rzp = new window.Razorpay(options);

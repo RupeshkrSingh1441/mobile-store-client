@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -5,6 +6,7 @@ import { CartProvider } from "./context/CartContext";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
 import ProductList from "./pages/ProductList";
+import Loader from "./components/Loader";
 import CartPage from "./pages/CartPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,6 +17,16 @@ import ProtectedRoute from "./auth/ProtectedRoute"; // ✅ Optional if you use p
 import NotFound from "./pages/NotFound";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  // Simulate initial app load (you can later tie this to actual data fetching)
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <Loader />;
+
   return (
     <AuthProvider>
       <CartProvider>

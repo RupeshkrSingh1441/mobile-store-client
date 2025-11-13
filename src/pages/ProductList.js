@@ -4,6 +4,7 @@ import { CartContext } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import CheckoutButton from "../components/CheckoutButton";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
 
 
 const ProductList = () => {
@@ -25,6 +26,7 @@ const ProductList = () => {
 
       const res = await axios.get(query);
       setProducts(res.data);
+      setLoading(false);
     } catch (err) {
       setError("Failed to load products");
     } finally {
@@ -54,7 +56,7 @@ const ProductList = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading)return <Loader />;;
   if (error) return <div className="text-danger mt-5">{error}</div>;
 
   return (

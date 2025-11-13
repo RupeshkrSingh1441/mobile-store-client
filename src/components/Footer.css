@@ -1,0 +1,17 @@
+/* === Light Theme Footer === */
+.sticky-footer {
+  background: #F6F7F9!important;
+  border-top: 1px solid #E2E8F0;
+  color: #475569 !important;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.sticky-footer a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.sticky-footer a:hover {
+  color: #1D4ED8;
+}
