@@ -1,0 +1,73 @@
+.profile-page {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  /* margin-top: 90px !important; */
+}
+
+/* Avatar */
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  background: #1e3a8a;
+  color: #fff;
+  font-weight: 600;
+  font-size: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section Titles */
+.section-title {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* Order Cards */
+.order-card {
+  padding: 16px;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.order-image {
+  width: 80px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.order-details .order-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.order-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.order-status.delivered {
+  color: #059669;
+}
+
+.order-status.shipped {
+  color: #2563eb;
+}
+
+.order-status.pending {
+  color: #b91c1c;
+}
+
+/* Address */
+.address-card {
+  border-left: 4px solid #2563eb;
+}

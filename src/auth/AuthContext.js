@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
 ? [decoded.role]
 : [];
       setUser({ ...decoded, roles, token });
+      //console.log('User loaded from token:', decoded);
     } catch (err) {
       console.error('Invalid token:', err);
       localStorage.removeItem('token');
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) loadUserFromToken(token);
+    console.log("Profile token auth:", token);
     setLoading(false);
   }, []);
 

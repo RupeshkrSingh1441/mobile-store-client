@@ -3,6 +3,7 @@ import { CartContext } from "../context/CartContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Breadcrumb from "../components/Breadcrumb";
 
 
 const CartPage = () => {
@@ -99,6 +100,7 @@ const CartPage = () => {
 
   return (
     <div className="container mt-4 mb-5">
+      <Breadcrumb />
       {/* === Header Section === */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-semibold text-primary">Your Cart</h2>

@@ -392,6 +392,7 @@ input.form-control:focus {
 /* Make content take remaining space */
 .main-content {
   flex: 1;
+  margin-top:70px !important;
 }
 
 .footer {

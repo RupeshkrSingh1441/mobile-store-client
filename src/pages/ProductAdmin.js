@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Breadcrumb from "../components/Breadcrumb";
 
 const ProductAdmin = () => {
   const [products, setProducts] = useState([]);
@@ -126,6 +127,7 @@ const ProductAdmin = () => {
   // ✅ Main UI
   return (
     <main className="d-flex align-items-center justify-content-center vh-100 bg-light">
+      <Breadcrumb />
       <div className="card shadow-lg p-4 w-100" style={{ maxWidth: "600px" }}>
         <h2 className="admin-title text-center fw-bold mb-4">Admin – Manage Products</h2>
 

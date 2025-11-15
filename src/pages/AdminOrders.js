@@ -1,5 +1,6 @@
 import React,{useEffect,useState} from "react";
 import axios from "axios";
+import Breadcrumb from "../components/Breadcrumb";
 
 const AdminOrders = () => {
 const [orders, setOrders] = useState([]);
@@ -26,6 +27,7 @@ const token = localStorage.getItem('token');
 
 return (
     <div className="container mt-4">
+      <Breadcrumb />
     <h2>All Orders</h2>
     <table className="table table-bordered">
         <thead> 

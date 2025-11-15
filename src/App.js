@@ -9,6 +9,7 @@ import ProductList from "./pages/ProductList";
 import Loader from "./components/Loader";
 import CartPage from "./pages/CartPage";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import ProductDetails from "./pages/ProductDetails";
 import AdminOrders from "./pages/AdminOrders"; // ✅ Import your admin page
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/" element={<ProductList />} />
                 <Route path="/mobile-store-client" element={<ProductList />} />
                 <Route path="/cart" element={<CartPage />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/product/:id" element={<ProductDetails />} />

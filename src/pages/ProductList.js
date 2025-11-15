@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import CheckoutButton from "../components/CheckoutButton";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
+import Breadcrumb from "../components/Breadcrumb";
 
 
 const ProductList = () => {
@@ -34,8 +35,6 @@ const ProductList = () => {
     }
   };
 
-  
-
   useEffect(() => {
     fetchProducts();
   }, [search, brand]);
@@ -43,6 +42,7 @@ const ProductList = () => {
   // ✅ Handle Add or Go to Cart
   const handleCartAction = (product) => {
     const inCart = cart.some((item) => item.id === product.id);
+    console.log("In Cart:", inCart);
     if (inCart) {
       // Redirect to cart page
       navigate("/cart");
@@ -56,11 +56,14 @@ const ProductList = () => {
     }
   };
 
+
   if (loading)return <Loader />;;
   if (error) return <div className="text-danger mt-5">{error}</div>;
 
   return (
     <div className="container mt-4 mb-10">
+      <Breadcrumb />
+
       <h2 className="mb-4 fw-semibold">Mobile Phones</h2>
 
       {/* Filters */}
@@ -112,7 +115,9 @@ const ProductList = () => {
                 <p className="product-description">{product.description}</p>
 
                 <div className="d-flex gap-2 align-items-center mb-2">
-                  <CheckoutButton amount={product.price} />
+                  <div onClick={(e) => e.stopPropagation()}>
+                     <CheckoutButton amount={product.price} />
+                  </div>
 
                   <button
                     className={`btn ${
@@ -121,7 +126,11 @@ const ProductList = () => {
                         : "btn-outline-secondary shadow-sm"
                     }`}
                     style={{ minWidth: "120px" }}
-                    onClick={() => handleCartAction(product)}
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleCartAction(product);
+                    }
+                      }
                   >
                     {inCart ? "Go to Cart" : "Add to Cart"}
                   </button>

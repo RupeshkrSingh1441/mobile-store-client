@@ -4,6 +4,7 @@ import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
+import Breadcrumb from "../components/Breadcrumb";
 
 
 const ProductDetails = () => {
@@ -74,6 +75,8 @@ const ProductDetails = () => {
 
   return (
     <div className="container my-5">
+      <Breadcrumb />
+
       <button
         className="btn btn-outline-secondary mb-4"
         onClick={() => navigate(-1)}
