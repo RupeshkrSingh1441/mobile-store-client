@@ -1,0 +1,32 @@
+.admin-table-wrapper {
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.admin-table thead th {
+  background: #f8fafc;
+  font-weight: 600;
+  padding: 14px;
+}
+
+.admin-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: #f1f5f9;
+  transform: translateY(-2px);
+}
+
+.admin-table td, 
+.admin-table th {
+  padding: 14px 12px;
+  vertical-align: middle !important;
+}
+
+/* Badge styling */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
