@@ -1,77 +1,104 @@
-// src/components/Breadcrumb.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import "./Breadcrumb.css";
 
-const Breadcrumb = () => {
+const Breadcrumb = ({ productName }) => {
   const location = useLocation();
-  const [product, setProduct] = useState(null);
+  const pathSegments = location.pathname
+    .split("/")
+    .filter((x) => x && x.trim() !== "");
 
-  const pathSegments = location.pathname.split("/").filter(Boolean);
+  // Build clean breadcrumb list
+  const crumbs = [];
 
-  // Fetch product when URL includes /product/:id
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const productIndex = pathSegments.indexOf("product");
+  // Always include Home
+  crumbs.push({ label: "Home", url: "/" });
 
-      if (productIndex !== -1 && pathSegments[productIndex + 1]) {
-        const productId = pathSegments[productIndex + 1];
-        try {
-          const res = await axios.get(
-            `${process.env.REACT_APP_API_URL}/store/products/${productId}`
-          );
-          setProduct(res.data);
-        } catch (err) {
-          console.error("Failed to load product", err);
-        }
-      }
-    };
+  // Handle Admin Products section
+  if (pathSegments[0] === "admin-products") {
+    crumbs.push({
+      label: "Admin Products",
+      url: "/admin-products",
+    });
 
-    fetchProduct();
-  }, [location.pathname]);
-
-  const buildPath = (index) => "/" + pathSegments.slice(0, index + 1).join("/");
-
-  const formatSegment = (segment, index) => {
-    // Product page special handling
-    if (segment === "product") return "";
-
-    if (pathSegments[index - 1] === "product" && product) {
-      return `${product.brand} / ${product.model}`;
+    // Add Product
+    if (pathSegments.includes("add")) {
+      crumbs.push({
+        label: "Add Product",
+        url: null, // not clickable
+      });
     }
 
-    return decodeURIComponent(segment)
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  };
+    // Edit Product: pattern /admin-products/edit/:id
+    if (pathSegments.includes("edit")) {
+      crumbs.push({
+        label: "Edit Product",
+        url: null, // not clickable
+      });
+    }
+  }
+
+  // Product Detail page → /product/:id
+if (pathSegments[0] === "product" && pathSegments.length === 2) {
+  crumbs.push({
+    label: "Products",
+    url: null, // not clickable
+  });
+
+  crumbs.push({
+    label: productName || "Product Details",
+    url: null
+  });
+}
+
+if(pathSegments[0] === "cart") {
+    crumbs.push({
+      label: "Cart",
+      url: null,
+    });   
+}
+
+if(pathSegments[0] === "profile") {
+    crumbs.push({
+      label: "Profile",
+      url: null,
+    });   
+}
+
+if(pathSegments[0] === "admin-order") {
+    crumbs.push({
+      label: "Admin Orders",
+      url: null,
+    });   
+}
+
+  // --- You can extend same pattern for other admin sections later ---
+  // Example: admin-orders, admin-users, etc.
 
   return (
-    <nav className="breadcrumb-nav">
-      <ol className="breadcrumb-list">
-        <li>
-          <Link to="/" className="breadcrumb-link">
-            Home
-          </Link>
-        </li>
+    <nav aria-label="breadcrumb" className="breadcrumb-wrapper">
+      <ol className="breadcrumb">
+         
 
-        {pathSegments.map((segment, index) => {
-          const isLast = index === pathSegments.length - 1;
-          const label = formatSegment(segment, index);
-          const url = buildPath(index);
+        {crumbs.map((c, index) => (
+          <li
+            key={index}
+            className={
+              index === crumbs.length - 1
+                ? "breadcrumb-item active"
+                : "breadcrumb-item"
+            }
+          >
+            {c.url ? (
+              <Link to={c.url} className="breadcrumb-link">
+                {c.label}
+              </Link>
+            ) : (
+              <span>{c.label}</span>
+            )}
+          </li>
+        ))}
 
-          return (
-            <li key={index} className={isLast ? "active" : ""}>
-              {isLast ? (
-                <span>{label}</span>
-              ) : (
-                <Link to={url} className="breadcrumb-link">
-                  {label}
-                </Link>
-              )}
-            </li>
-          );
-        })}
       </ol>
     </nav>
   );

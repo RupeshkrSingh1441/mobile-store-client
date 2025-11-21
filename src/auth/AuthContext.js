@@ -1,73 +1,71 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+// src/auth/AuthContext.js
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
+import Loader from "../shared/Loader";
+
+const API = process.env.REACT_APP_API_URL;
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);      // full profile object
+  const [token, setToken] = useState(null);    // JWT string
   const [loading, setLoading] = useState(true);
 
-  const loadUserFromToken = (token) => {
+  // Helper to load profile from API
+  const fetchProfile = async (jwt) => {
     try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) {
-        console.warn('Token expired');
-        localStorage.removeItem('token');
-        setUser(null);
-        return;
-      }
-      const roles = decoded.roles ? decoded.roles.split(',') : decoded.role
-? [decoded.role]
-: [];
-      setUser({ ...decoded, roles, token });
-      //console.log('User loaded from token:', decoded);
+      const res = await axios.get(`${API}/auth/profile`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setUser(res.data);        // has fullName, email, address, roles, etc.
     } catch (err) {
-      console.error('Invalid token:', err);
-      localStorage.removeItem('token');
+      console.error("Failed to load profile:", err);
+      // Bad token? log out
+      localStorage.removeItem("token");
+      setToken(null);
       setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // On first load, read token from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) loadUserFromToken(token);
-    console.log("Profile token auth:", token);
-    setLoading(false);
+    const stored = localStorage.getItem("token");
+    if (!stored) {
+      setLoading(false);
+      return;
+    }
+
+    setToken(stored);
+    fetchProfile(stored);
   }, []);
 
-  const login = (token) => {
-    localStorage.setItem('token', token);
-    loadUserFromToken(token);
-
-    try {
-      const decoded = jwtDecode(token);
-      const roles = decoded.roles
-        ? decoded.roles.split(',')
-        : decoded.role
-        ? [decoded.role]
-        : [];
-
-      // ✅ Role-based redirect
-      if (roles.includes('Admin')) {
-        window.location.href = '/admin-order';
-      } else {
-        window.location.href = '/';
-      }
-    } catch (err) {
-      console.error('JWT decode failed:', err);
-      window.location.href = '/';
-    }
+  // Login: save token & load profile
+  const login = async (jwt) => {
+    localStorage.setItem("token", jwt);
+    setToken(jwt);
+    setLoading(true);
+    await fetchProfile(jwt);
   };
 
+  // Logout: clear everything
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
+    setToken(null);
     setUser(null);
-    window.location.href = '/login';
+    setLoading(false);
+    window.location.href = "/login";
   };
+
+  if (loading) return <Loader />;
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

@@ -4,9 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Breadcrumb from "../components/Breadcrumb";
+import { useAuth } from "../auth/AuthContext";
 
 
 const CartPage = () => {
+  const { user } = useAuth();
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
     useContext(CartContext);
   const [selectedItems, setSelectedItems] = useState([]); // ✅ Track selected products
@@ -86,6 +88,18 @@ const CartPage = () => {
       toast.error("Payment initiation failed!");
     }
   };
+
+  // Prevent cart showing if user is not loaded yet
+if (!user) {
+  return (
+    <div className="container text-center mt-5">
+      <h4>Please login to view your cart.</h4>
+      <button className="btn btn-primary mt-3" onClick={() => navigate("/login")}>
+        Login
+      </button>
+    </div>
+  );
+}
 
   if (cart.length === 0) {
     return (
@@ -206,8 +220,8 @@ const CartPage = () => {
           >
             Continue Shopping
           </button>
-          <button className="btn btn-success px-4" onClick={handlePayNow}>
-            Checkout Selected
+          <button className="btn btn-success px-4" onClick={handlePayNow} disabled={selectedItems.length === 0}>
+            {selectedItems.length === 0 ? "Select items first" : "Checkout Selected"}
           </button>
         </div>
       </div>

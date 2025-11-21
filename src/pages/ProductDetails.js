@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { toast } from "react-toastify";
-import Loader from "../components/Loader";
+import Loader from "../shared/Loader";
 import Breadcrumb from "../components/Breadcrumb";
 
 
@@ -52,7 +52,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     addToCart(product);
-    toast.success("Added to cart!");
+    //toast.success("Added to cart!");
   };
 
   const handleCheckPincode = async () => {
@@ -75,7 +75,7 @@ const ProductDetails = () => {
 
   return (
     <div className="container my-5">
-      <Breadcrumb />
+      <Breadcrumb productName={`${product?.brand} ${product?.model}`} />
 
       <button
         className="btn btn-outline-secondary mb-4"

@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../auth/AuthContext";
+import { useAuth } from "./AuthContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 const Login = () => {
   const [model, setModel] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
 
   const handleChange = (e) =>
     setModel({ ...model, [e.target.name]: e.target.value });
@@ -20,8 +20,7 @@ const Login = () => {
       );
       const token = res.data.token;
       if (!token) throw new Error("Token not returned");
-      login(token); // ✅ Handles role-based redirect internally
-      console.log(localStorage.getItem("token"));
+      login(token); // ✅ Handles role-based redirect internally      
     } catch (err) {
       setError("Invalid email or password");
     }

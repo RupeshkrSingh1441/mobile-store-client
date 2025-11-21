@@ -1,72 +1,169 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./auth/AuthContext";
-import { CartProvider } from "./context/CartContext";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
+import Loader from "./shared/Loader";
+
 import ProductList from "./pages/ProductList";
-import Loader from "./components/Loader";
-import CartPage from "./pages/CartPage";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import Register from "./pages/Register";
 import ProductDetails from "./pages/ProductDetails";
-import AdminOrders from "./pages/AdminOrders"; // ✅ Import your admin page
-import AdminRoute from "./auth/AdminRoute"; // ✅ Import your AdminRoute
-import ProtectedRoute from "./auth/ProtectedRoute"; // ✅ Optional if you use protected user-only routes
+import Login from "./auth/Login";
+import Register from "./auth/Register";
+import ConfirmEmail from "./auth/ConfirmEmail";
+
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import CartPage from "./pages/CartPage";
+
+import AdminProducts from "./admin/AdminProducts";
+import AdminProductForm from "./admin/AdminProductForm";
+import AdminOrders from "./admin/AdminOrders";
+//import ProductAdmin from "./admin/ProductAdmin";
+
 import NotFound from "./pages/NotFound";
+import IdleLogoutModal from "./components/IdleLogoutModal";
+import useIdleLogout from "./hooks/useIdleLogout";
+import { useAuth } from "./auth/AuthContext";
+
+// Protect normal user routes
+const PrivateRoute = ({ children }) => {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" replace />;
+};
+
+// Protect admin-only routes
+const AdminRoute = ({ children }) => {
+  const { user } = useAuth();
+  return user?.role === "Admin" ? children : <Navigate to="/" replace />;
+};
 
 function App() {
+  const { logout, user, initializing } = useAuth(); // ⬅ KEY FIX
   const [loading, setLoading] = useState(true);
+  const [showIdleModal, setShowIdleModal] = useState(false);
 
-  // Simulate initial app load (you can later tie this to actual data fetching)
+  // 🔥 Enable auto logout ONLY if user is logged in
+  const { continueSession, forceLogout } = useIdleLogout(() => {
+    if (user) logout();
+    window.location.href = "/login";
+  }, setShowIdleModal);
+
+  // Wait for AuthContext initialization
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!initializing) {
+      setLoading(false);
+    }
+  }, [initializing]);
 
   if (loading) return <Loader />;
 
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <div className="app-container">
-            <Header />
-            <main className="main-content">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<ProductList />} />
-                <Route path="/mobile-store-client" element={<ProductList />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/product/:id" element={<ProductDetails />} />
+    <div className="app-container">
+      <IdleLogoutModal
+        show={showIdleModal}
+        onContinue={continueSession}
+        onLogout={forceLogout}
+      />
+      <Header />
 
-                {/* Protected Routes (any logged-in user) */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/profile" element={<div>My Profile</div>} />
-                  {/* you can add more protected pages here */}
-                </Route>
+      <main className="main-content">
+        <Routes>
+          {/* Public pages */}
+          <Route path="/" element={<ProductList />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
 
-                {/* Admin Routes */}
-                <Route element={<AdminRoute />}>
-                  <Route path="/admin-order" element={<AdminOrders />} />
-                  {/* you can also include more like: */}
-                  {/* <Route path="/admin/products" element={<ProductAdmin />} /> */}
-                </Route>
+          {/* Prevent logged-in users from accessing login/register */}
+          <Route
+            path="/login"
+            element={!user ? <Login /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/register"
+            element={!user ? <Register /> : <Navigate to="/" />}
+          />
 
-                {/* ✅ Catch-all route for 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
+
+          {/* Private pages */}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/profile/edit"
+            element={
+              <PrivateRoute>
+                <EditProfile />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <CartPage />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Admin-only */}
+          <Route
+            path="/admin-products"
+            element={
+              <AdminRoute>
+                <AdminProducts />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin-products/new"
+            element={
+              <AdminRoute>
+                <AdminProductForm />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin-products/edit/:id"
+            element={
+              <AdminRoute>
+                <AdminProductForm />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin-order"
+            element={
+              <AdminRoute>
+                <AdminOrders />
+              </AdminRoute>
+            }
+          />
+
+          {/* Remove this if not needed */}
+          <Route path="/product-admin" element={<Navigate to="/" />} />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
   );
 }
 

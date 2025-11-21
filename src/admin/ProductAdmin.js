@@ -20,6 +20,7 @@ const ProductAdmin = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        debugger;
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/product`, {
           headers: { Authorization: `Bearer ${token}` },
         });

@@ -1,5 +1,5 @@
 import React from 'react';
-import "../components/Footer.css";
+import "../shared/Footer.css";
 
 const Footer = () => (
     <footer className="sticky-footer footer text-center py-3">

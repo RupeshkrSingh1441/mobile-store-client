@@ -457,3 +457,11 @@ body,
   50% { transform: scale(1.1); color:#ff3b3b; }
   100% { transform: scale(1); }
 }
+
+input::placeholder,
+textarea::placeholder,
+.admin-product-form input::placeholder,
+.admin-product-form textarea::placeholder {
+  color:#b9b9b9;   /* light grey */
+  opacity: 1;       /* ensure color is not auto-faded by browser */
+}

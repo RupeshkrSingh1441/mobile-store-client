@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CheckoutButton from "../components/CheckoutButton";
 import { toast } from "react-toastify";
-import Loader from "../components/Loader";
+import Loader from "../shared/Loader";
 import Breadcrumb from "../components/Breadcrumb";
-
+import Pagination from "../components/Pagination";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -16,6 +16,13 @@ const ProductList = () => {
   const [search, setSearch] = useState("");
   const [brand, setBrand] = useState("");
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // or 8 for mobile grid
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const currentItems = products.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // ✅ Fetch products from API
   const fetchProducts = async () => {
@@ -49,15 +56,25 @@ const ProductList = () => {
     } else {
       // Add product to cart
       addToCart(product);
-      toast.success(`${product.brand} added to cart!`, {
-        position: "top-right",
-        autoClose: 1500,
-      });
+      // toast.success(`${product.brand} added to cart!`, {
+      //   position: "top-right",
+      //   autoClose: 1500,
+      // });
     }
   };
 
+  const handlePageChange = (page) => {
+  setCurrentPage(page);
 
-  if (loading)return <Loader />;;
+  // Smooth scroll to top of the page/table
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+};
+
+
+  if (loading) return <Loader />;
   if (error) return <div className="text-danger mt-5">{error}</div>;
 
   return (
@@ -90,12 +107,16 @@ const ProductList = () => {
 
       {/* Products */}
       <div className="product-list">
-        {products.map((product) => {
+        {currentItems.map((product) => {
           const inCart = cart.some((item) => item.id === product.id);
 
           return (
-            <div className="product-card" key={product.id} onClick={() => navigate(`/product/${product.id}`)} 
-            style={{ cursor: "pointer" }}>
+            <div
+              className="product-card"
+              key={product.id}
+              onClick={() => navigate(`/product/${product.id}`)}
+              style={{ cursor: "pointer" }}
+            >
               <img
                 src={product.imageUrl || "/placeholder.jpg"}
                 alt={product.brand}
@@ -116,7 +137,7 @@ const ProductList = () => {
 
                 <div className="d-flex gap-2 align-items-center mb-2">
                   <div onClick={(e) => e.stopPropagation()}>
-                     <CheckoutButton amount={product.price} />
+                    <CheckoutButton amount={product.price} />
                   </div>
 
                   <button
@@ -127,10 +148,9 @@ const ProductList = () => {
                     }`}
                     style={{ minWidth: "120px" }}
                     onClick={(e) => {
-                      e.stopPropagation(); 
+                      e.stopPropagation();
                       handleCartAction(product);
-                    }
-                      }
+                    }}
                   >
                     {inCart ? "Go to Cart" : "Add to Cart"}
                   </button>
@@ -140,6 +160,12 @@ const ProductList = () => {
           );
         })}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
