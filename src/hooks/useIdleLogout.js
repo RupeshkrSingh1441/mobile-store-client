@@ -1,47 +1,47 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const useIdleLogout = (onLogout, onShowModal, idleTime = 2 * 60 * 1000) => {
-  const warningShown = useRef(false);
-  const timerRef = useRef(null);
+export default function useIdleLogout({ timeout = 120000, onTimeout }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const idleTimer = useRef(null);
+  const logoutTimer = useRef(null);
+
+  const resetTimer = () => {
+    clearTimeout(idleTimer.current);
+    clearTimeout(logoutTimer.current);
+
+    idleTimer.current = setTimeout(() => {
+      setShowPopup(true);
+
+      // Auto logout in 2 minutes if no response
+      logoutTimer.current = setTimeout(() => {
+        onTimeout();  // force logout
+      }, timeout);
+
+    }, timeout);
+  };
 
   useEffect(() => {
-    const resetIdleTimer = () => {
-      clearTimeout(timerRef.current);
-
-      if (warningShown.current) return;
-
-      timerRef.current = setTimeout(() => {
-        warningShown.current = true;
-        onShowModal(true); // show popup
-      }, idleTime);
-    };
-
     const events = ["mousemove", "keydown", "click", "scroll"];
-    events.forEach((event) => window.addEventListener(event, resetIdleTimer));
 
-    resetIdleTimer();
+    events.forEach((event) => {
+      window.addEventListener(event, resetTimer);
+    });
+
+    resetTimer();
 
     return () => {
-      clearTimeout(timerRef.current);
-      events.forEach((event) =>
-        window.removeEventListener(event, resetIdleTimer)
-      );
+      events.forEach((event) => {
+        window.removeEventListener(event, resetTimer);
+      });
+      clearTimeout(idleTimer.current);
+      clearTimeout(logoutTimer.current);
     };
-  }, [onLogout, onShowModal, idleTime]);
+  }, []);
 
-  // When user clicks "Continue"
-  const continueSession = () => {
-    warningShown.current = false;
-    onShowModal(false);
+  const stayLoggedIn = () => {
+    setShowPopup(false);
+    resetTimer();
   };
 
-  // When "Logout" clicked → call parent logout
-  const forceLogout = () => {
-    onShowModal(false);
-    onLogout();
-  };
-
-  return { continueSession, forceLogout };
-};
-
-export default useIdleLogout;
+  return { showPopup, stayLoggedIn };
+}

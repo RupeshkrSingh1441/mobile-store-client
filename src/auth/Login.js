@@ -1,60 +1,79 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { axiosSecure } from "../api/axiosInstance";
 import { useAuth } from "./AuthContext";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [model, setModel] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleChange = (e) =>
-    setModel({ ...model, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        model
-      );
-      const token = res.data.token;
-      if (!token) throw new Error("Token not returned");
-      login(token); // ✅ Handles role-based redirect internally      
+      const res = await axiosSecure.post("/auth/login", form);
+      const { accessToken, refreshToken } = res.data;
+
+      if (!accessToken || !refreshToken) {
+        toast.error("Invalid login response. Tokens missing.",{
+  duration: 20000, // Set the duration to 20000ms (20 seconds)
+});
+        setLoading(false);
+        return;
+      }
+
+      await login(accessToken, refreshToken);
+      toast.success("Login successful!",{
+  duration: 10000, // Set the duration to 20000ms (20 seconds)
+});
+      navigate("/");
     } catch (err) {
       setError("Invalid email or password");
+      console.error("Login error:", err);
+      toast.error(err.response?.data || "Login failed",{
+  duration: 20000, // Set the duration to 20000ms (20 seconds)
+});
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-wrapper d-flex align-items-center justify-content-center">
+    <div className="container d-flex align-items-center justify-content-center mt-5">
       <form
-        className="login-form p-4 shadow-lg rounded"
         onSubmit={handleSubmit}
+        className="login-form p-4 shadow-lg rounded"
       >
-        <h2 className="mb-4 text-center">Login</h2>
-        <div className="mb-3">
-          {" "}
-          <input
-            type="email"
-            name="email"
-            className="form-control mb-2"
-            placeholder="Email"
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <input
-            type="password"
-            name="password"
-            className="form-control mb-2"
-            placeholder="Password"
-            onChange={handleChange}
-          />
-        </div>
-        <button className="btn btn-success w-100">Login</button>
-        {error && <div className="mt-3 alert alert-danger">{error}</div>}
+        <h3 className="mb-4 text-center">Login</h3>
+        <input
+          className="form-control mb-3"
+          name="email"
+          placeholder="Email"
+          onChange={handleChange}
+          required
+        />
+        <input
+          className="form-control mb-3"
+          name="password"
+          type="password"
+          placeholder="Password"
+          onChange={handleChange}
+          required
+        />
 
+        <button disabled={loading} className="btn btn-success w-100">
+          {loading ? "Please wait..." : "Login"}
+        </button>
+        {error && <div className="mt-3 alert alert-danger">{error}</div>}
         <div className="text-center mt-3">
           <small className="text-muted">Don't have an account?</small>
           <br />

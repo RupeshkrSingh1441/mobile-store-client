@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { CartContext } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import CheckoutButton from "../components/CheckoutButton";
@@ -32,7 +32,7 @@ const ProductList = () => {
       if (search) query += `&search=${search}`;
       if (brand) query += `&brand=${brand}`;
 
-      const res = await axios.get(query);
+      const res = await axiosSecure.get(query);
       setProducts(res.data);
       setLoading(false);
     } catch (err) {
@@ -49,7 +49,6 @@ const ProductList = () => {
   // ✅ Handle Add or Go to Cart
   const handleCartAction = (product) => {
     const inCart = cart.some((item) => item.id === product.id);
-    console.log("In Cart:", inCart);
     if (inCart) {
       // Redirect to cart page
       navigate("/cart");

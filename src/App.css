@@ -42,3 +42,7 @@
   50% { transform: scale(1.1); color:#ff3b3b; }
   100% { transform: scale(1); }
 }
+
+.text-primary{
+  color:#169bea !important;
+}

@@ -1,7 +1,7 @@
 // src/admin/AdminProductForm.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance"; 
 import { toast } from "react-toastify";
 import Loader from "../shared/Loader";
 import Breadcrumb from "../components/Breadcrumb";
@@ -38,7 +38,7 @@ const AdminProductForm = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
+        const res = await axiosSecure.get(
           `${process.env.REACT_APP_API_URL}/product/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -102,7 +102,7 @@ const AdminProductForm = () => {
 
       const method = isEditMode ? "put" : "post";
 
-      await axios[method](url, product, {
+      await axiosSecure[method](url, product, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

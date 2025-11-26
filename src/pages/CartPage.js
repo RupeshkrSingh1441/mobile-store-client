@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Breadcrumb from "../components/Breadcrumb";
@@ -56,7 +56,7 @@ const CartPage = () => {
       );
 
       const totalAmount = getTotalAmount();
-      const res = await axios.post(
+      const res = await axiosSecure.post(
         `${process.env.REACT_APP_API_URL}/payment/create-order`,
         {
           amount: totalAmount,

@@ -1,10 +1,10 @@
 import React from 'react';
-import axios from 'axios';
+import { axiosSecure } from "../api/axiosInstance";
 
 const CheckoutButton = ({ amount }) => {
     const handlePayment = async () => {
         try{
-            const {data} = await axios.post(`${process.env.REACT_APP_API_URL}/payment/create-order`, { amount });
+            const {data} = await axiosSecure.post(`${process.env.REACT_APP_API_URL}/payment/create-order`, { amount });
 
             const options = {
                 key: data.key,

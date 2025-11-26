@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
@@ -33,10 +33,9 @@ const AdminProducts = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/product`, {
+      const res = await axiosSecure.get(`${process.env.REACT_APP_API_URL}/product`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Res:", res.data);
       setProducts(res.data);
       setFiltered(res.data);
     } catch (err) {
@@ -69,7 +68,7 @@ const AdminProducts = () => {
     if (!window.confirm("Delete this product?")) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
+      await axiosSecure.delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

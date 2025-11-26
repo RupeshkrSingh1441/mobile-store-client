@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import Breadcrumb from "../components/Breadcrumb";
 
 const ProductAdmin = () => {
@@ -21,7 +21,7 @@ const ProductAdmin = () => {
     const fetchProducts = async () => {
       try {
         debugger;
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/product`, {
+        const res = await axiosSecure.get(`${process.env.REACT_APP_API_URL}/product`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts(res.data.products || []);
@@ -71,7 +71,7 @@ const ProductAdmin = () => {
       formData.append("price", newProduct.price);
       formData.append("image", imageFile); // backend should expect "image" field
 
-      const res = await axios.post(
+      const res = await axiosSecure.post(
         `${process.env.REACT_APP_API_URL}/product`,
         formData,
         {
@@ -96,7 +96,7 @@ const ProductAdmin = () => {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
+      await axiosSecure.delete(`${process.env.REACT_APP_API_URL}/product/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts((prev) => prev.filter((p) => p.id !== id));

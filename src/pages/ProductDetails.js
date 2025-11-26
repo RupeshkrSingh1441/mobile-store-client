@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { CartContext } from "../context/CartContext";
 import { toast } from "react-toastify";
 import Loader from "../shared/Loader";
@@ -26,12 +26,11 @@ const ProductDetails = () => {
       try {
         setLoading(true);
 
-        const res = await axios.get(
+        const res = await axiosSecure.get(
           `${process.env.REACT_APP_API_URL}/store/product-full/${id}`
         );
 
         const data = res.data;
-        console.log(data);
         setProduct(data.product);
         setImages(data.images || []);
         setMainImage(data.images?.[0] || data.product.imageUrl);
@@ -59,7 +58,7 @@ const ProductDetails = () => {
     if (!pincode) return toast.error("Enter pincode");
 
     try {
-      const res = await axios.get(
+      const res = await axiosSecure.get(
         `${process.env.REACT_APP_API_URL}/store/delivery/${pincode}`
       );
       toast.info(res.data.message);

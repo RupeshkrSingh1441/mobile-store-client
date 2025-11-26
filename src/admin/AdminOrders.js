@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import Breadcrumb from "../components/Breadcrumb";
+import { useAuth } from "../auth/AuthContext";
 import "./AdminOrders.css"; // 👉 Add this CSS file
 import Pagination from "../components/Pagination";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
-  const token = localStorage.getItem("token");
+  const { accessToken } = useAuth();
+  //const token = localStorage.getItem("accessToken");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // or 8 for mobile grid
   const totalPages = Math.ceil(orders.length / itemsPerPage);
@@ -16,13 +18,12 @@ const AdminOrders = () => {
   );
 
   useEffect(() => {
-    if (!token) return;
-
+    if (!accessToken) return;
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/order/all-orders`,
-          { headers: { Authorization: `Bearer ${token}` } }
+        const response = await axiosSecure.get(
+          `${process.env.REACT_APP_API_URL}/Order/all-orders`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
         );
         setOrders(response.data);
       } catch (error) {
@@ -31,7 +32,7 @@ const AdminOrders = () => {
     };
 
     fetchOrders();
-  }, [token]);
+  }, [accessToken]);
 
   // Status badge color logic
   const getStatusClass = (status) => {

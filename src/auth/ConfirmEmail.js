@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { useSearchParams } from "react-router-dom";
 
 const ConfirmEmail =() => {
@@ -9,7 +9,7 @@ const ConfirmEmail =() => {
     useEffect(() => {
         const verify = async () => {
             try{
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/confirm-email`,{
+                const res = await axiosSecure.get(`${process.env.REACT_APP_API_URL}/auth/confirm-email`,{
                     params:{
                         userId: params.get("userId"),
                         token: params.get('token')

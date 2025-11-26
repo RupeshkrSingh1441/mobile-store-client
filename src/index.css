@@ -465,3 +465,7 @@ textarea::placeholder,
   color:#b9b9b9;   /* light grey */
   opacity: 1;       /* ensure color is not auto-faded by browser */
 }
+
+.text-primary{
+  color:#169bea !important;
+}

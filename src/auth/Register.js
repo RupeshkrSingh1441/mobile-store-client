@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { Link } from "react-router-dom";
 //import './Register.css;'
 
@@ -51,7 +51,7 @@ const Register = () => {
     e.preventDefault();
     if (!validate()) return; // ❌ stop if validation fails
     try {
-      const res = await axios.post(
+      const res = await axiosSecure.post(
         `${process.env.REACT_APP_API_URL}/auth/register`,
         model
       );

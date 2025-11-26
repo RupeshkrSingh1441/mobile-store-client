@@ -1,14 +1,16 @@
 // src/pages/EditProfile.js
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { useAuth } from "../auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { toast } from "react-toastify";
 
 const API = process.env.REACT_APP_API_URL;
 
 const EditProfile = () => {
-  const { token } = useAuth() || {};
+  const { accessToken } = useAuth() || {};
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     fullName: "",
     addressLine1: "",
@@ -18,9 +20,9 @@ const EditProfile = () => {
     zipCode: "",
   });
 
-  const authToken = token || localStorage.getItem("token");
+  const authToken = accessToken || localStorage.getItem("accessToken");
 
-  const axiosAuth = axios.create({
+  const axiosAuth = axiosSecure.create({
     baseURL: API,
     headers: { Authorization: `Bearer ${authToken}` },
   });
@@ -51,7 +53,12 @@ const EditProfile = () => {
   return (
     <div className="container py-4">
       <Breadcrumb />
-
+      <button
+        className="btn btn-outline-secondary mb-4"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
       <h3 className="mb-4">Edit Profile</h3>
 
       <div className="card p-4 shadow-sm">

@@ -19,10 +19,12 @@ import ConfirmEmail from "./auth/ConfirmEmail";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import CartPage from "./pages/CartPage";
+import SearchResults from "./pages/SearchResults";
 
 import AdminProducts from "./admin/AdminProducts";
 import AdminProductForm from "./admin/AdminProductForm";
 import AdminOrders from "./admin/AdminOrders";
+import AdminRoute from "./auth/AdminRoute";
 //import ProductAdmin from "./admin/ProductAdmin";
 
 import NotFound from "./pages/NotFound";
@@ -37,21 +39,25 @@ const PrivateRoute = ({ children }) => {
 };
 
 // Protect admin-only routes
-const AdminRoute = ({ children }) => {
-  const { user } = useAuth();
-  return user?.role === "Admin" ? children : <Navigate to="/" replace />;
-};
+// const AdminRoute = ({ children }) => {
+//   const { user } = useAuth();
+//   console.log("AdminRoute - user roles:", user);
+//   return user?.role[0] === "Admin" ? children : <Navigate to="/" replace />;
+// };
 
 function App() {
   const { logout, user, initializing } = useAuth(); // ⬅ KEY FIX
   const [loading, setLoading] = useState(true);
-  const [showIdleModal, setShowIdleModal] = useState(false);
+  //const [showIdleModal, setShowIdleModal] = useState(false);
 
   // 🔥 Enable auto logout ONLY if user is logged in
-  const { continueSession, forceLogout } = useIdleLogout(() => {
-    if (user) logout();
-    window.location.href = "/login";
-  }, setShowIdleModal);
+  const { showPopup, stayLoggedIn } = useIdleLogout({
+    timeout: 2 * 60 * 1000, // 2 minutes
+    onTimeout: () => {
+      logout();
+      window.location.href = "/login";
+    },
+  });
 
   // Wait for AuthContext initialization
   useEffect(() => {
@@ -64,11 +70,16 @@ function App() {
 
   return (
     <div className="app-container">
-      <IdleLogoutModal
-        show={showIdleModal}
-        onContinue={continueSession}
-        onLogout={forceLogout}
-      />
+      {user && (
+        <IdleLogoutModal
+          show={showPopup}
+          onContinue={stayLoggedIn}
+          onLogout={() => {
+            logout();
+            window.location.href = "/login";
+          }}
+        />
+      )}
       <Header />
 
       <main className="main-content">
@@ -76,6 +87,7 @@ function App() {
           {/* Public pages */}
           <Route path="/" element={<ProductList />} />
           <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/search" element={<SearchResults />} />
 
           {/* Prevent logged-in users from accessing login/register */}
           <Route
@@ -118,41 +130,15 @@ function App() {
           />
 
           {/* Admin-only */}
-          <Route
-            path="/admin-products"
-            element={
-              <AdminRoute>
-                <AdminProducts />
-              </AdminRoute>
-            }
-          />
-
-          <Route
-            path="/admin-products/new"
-            element={
-              <AdminRoute>
-                <AdminProductForm />
-              </AdminRoute>
-            }
-          />
-
-          <Route
-            path="/admin-products/edit/:id"
-            element={
-              <AdminRoute>
-                <AdminProductForm />
-              </AdminRoute>
-            }
-          />
-
-          <Route
-            path="/admin-order"
-            element={
-              <AdminRoute>
-                <AdminOrders />
-              </AdminRoute>
-            }
-          />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin-products" element={<AdminProducts />} />
+            <Route path="/admin-products/new" element={<AdminProductForm />} />
+            <Route
+              path="/admin-products/edit/:id"
+              element={<AdminProductForm />}
+            />
+            <Route path="/admin-order" element={<AdminOrders />} />
+          </Route>
 
           {/* Remove this if not needed */}
           <Route path="/product-admin" element={<Navigate to="/" />} />

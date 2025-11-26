@@ -1,31 +1,34 @@
 // src/pages/Profile.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosSecure } from "../api/axiosInstance";
 import { useAuth } from "../auth/AuthContext";
 import Loader from "../shared/Loader";
 import "./Profile.css";
 import Breadcrumb from "../components/Breadcrumb";
 
+
 const API = process.env.REACT_APP_API_URL;
 const API_ROOT = process.env.REACT_APP_API_URL.replace("/api", "");
 
+
 const Profile = () => {
-  const { token, logout } = useAuth();
+  const { accessToken, logout } = useAuth();
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
 
   useEffect(() => {
-    if (!token) {
+    if (!accessToken) {
       setLoading(false);
       setError("No login token found");
       return;
     }
 
-    const axiosAuth = axios.create({
+    const axiosAuth = axiosSecure.create({
       baseURL: API,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     const fetchData = async () => {
@@ -55,7 +58,7 @@ const Profile = () => {
     };
 
     fetchData();
-  }, [token, logout]);
+  }, [accessToken, logout]);
 
   if (loading) return <Loader />;
 
