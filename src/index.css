@@ -469,3 +469,22 @@ textarea::placeholder,
 .text-primary{
   color:#169bea !important;
 }
+
+.mobile-filter-bar { z-index: 1050; }
+
+.fixed-bottom {
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.mobile-filter-bar .btn {
+  min-width: 110px;
+}
+
+/* Slight animation for drawer */
+.mobile-drawer {
+  transform: translateX(6%);
+  animation: slideIn 220ms ease forwards;
+}
+@keyframes slideIn {
+  to { transform: translateX(0); }
+}

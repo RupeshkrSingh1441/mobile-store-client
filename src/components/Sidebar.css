@@ -1,0 +1,49 @@
+.sidebar-container {
+  width: 250px;
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #e6e6e6;
+  position: sticky;
+  top: 88px;
+  height: fit-content;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sidebar-section {
+  margin-bottom: 14px;
+}
+
+.sidebar-section .form-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* .sidebar-section select,
+.sidebar-section input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  margin-top: 3px;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.price-inputs input {
+  flex: 1;
+} */
+
+/* MOBILE — Hide sidebar and replace with responsive drawer later */
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none;
+  }
+}

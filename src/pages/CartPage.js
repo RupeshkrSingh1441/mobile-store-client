@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import Breadcrumb from "../components/Breadcrumb";
 import { useAuth } from "../auth/AuthContext";
 
+const API = process.env.REACT_APP_API_URL;
+const API_ROOT = API.replace("/api", "");
 
 const CartPage = () => {
   const { user } = useAuth();
@@ -153,7 +155,8 @@ if (!user) {
                   onChange={() => toggleSelection(product.id)}
                 />
                 <img
-                  src={product.imageUrl || "/placeholder.jpg"}
+                  src={product.imageUrl ? `${API_ROOT}${product.imageUrl}`
+                              : "/placeholder.jpg"}
                   alt={product.brand}
                   style={{
                     height: "100px",

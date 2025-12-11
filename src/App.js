@@ -85,7 +85,9 @@ function App() {
       <main className="main-content">
         <Routes>
           {/* Public pages */}
+           <Route path="/mobile-store-client" element={<ProductList />} />
           <Route path="/" element={<ProductList />} />
+          <Route path="/products" element={<ProductList />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/search" element={<SearchResults />} />
 
